@@ -1,32 +1,38 @@
+import { LoginPage, InventoryPage, ShoppingCartPage } from "../page/index";
+
+let loginPage:LoginPage;
+let inventoryPage:InventoryPage;
+let shoppingCartPage:ShoppingCartPage;
+
 describe("Verifying product selection Process for SauceDemo", () => {
     beforeEach(() => {
       cy.visit("https://www.saucedemo.com/");
+      loginPage = new LoginPage();
+      inventoryPage = new InventoryPage();
+      shoppingCartPage = new ShoppingCartPage();
     });
 
     it("Backpack and Onesie should be added to the Cart", () => {
       cy.visit("https://www.saucedemo.com/");
-      cy.get('[data-test="username"]').type("standard_user");
-      cy.get('[data-test="password"]').type("secret_sauce");
-      cy.get('[data-test="login-button"]').click();
-  
+      loginPage.login("standard_user","secret_sauce");
       // Assertion that verifies that products list is displayed
-      cy.get(".title").should("have.text", "Products");
+      inventoryPage.getTitle().should("have.text", "Products");
 
-      cy.get('[data-test="add-to-cart-sauce-labs-backpack"]').click();
-      cy.get('[data-test="add-to-cart-sauce-labs-onesie"]').click();
+      inventoryPage.addOnesieToCart();
+      inventoryPage.addBackpackToCart();
 
       //Assertion that verifies the correct clicking of the products
-      cy.get('[data-test="remove-sauce-labs-backpack"]').should("be.visible");
-      cy.get('[data-test="remove-sauce-labs-onesie"]').should("be.visible");
-      cy.get('.shopping_cart_badge').should("have.text",2);
+      inventoryPage.getRemoveOnesieBtn().should("be.visible");
+      inventoryPage.getRemoveBackpackBtn().should("be.visible");
+      inventoryPage.getCartBadge().should("have.text",2);
 
 
-      cy.get('.shopping_cart_link').click();
+      inventoryPage.goToCart();
 
       //Assertion that verifies the two items in the cart and only those
-      cy.get('.inventory_item_name').should("contain","Sauce Labs Backpack");
-      cy.get('.inventory_item_name').should("contain","Sauce Labs Onesie");
-      cy.get('.inventory_item_name').should("have.length",2);
+      shoppingCartPage.getItemName().should("contain","Sauce Labs Backpack");
+      shoppingCartPage.getItemName().should("contain","Sauce Labs Onesie");
+      shoppingCartPage.getItemName().should("have.length",2);
     })
   });
   
