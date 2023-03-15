@@ -1,5 +1,5 @@
 name: E2E shop tests
-on: [push]
+on: [pull-request]
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
